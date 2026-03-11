@@ -9,16 +9,11 @@ export class RequestService {
   constructor(private prismaService:PrismaService){}
 
   //creating a request
-  async create(dto: CreateRequestDto) {
+  async create(dto: CreateRequestDto,image: string) {
     const request = await this.prismaService.request.create({
       data:{
-        userId:dto.userId,
-        itemName: dto.itemName,
-        itemDescription: dto.itemDescription,
-        images: dto.images ?? [],
-        price: dto.price,
-        //i will check about the status
-        status: dto.status
+        ...dto,
+        images:[image]
       }
     })
 
