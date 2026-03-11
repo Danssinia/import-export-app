@@ -11,15 +11,15 @@ export class OrderService {
   //creating an order (place order) (both by Admin and user)
   async create(createOrderDto: CreateOrderDto) {
     //check if the product first exists
-    // const productExists = await this.prismaService.product.findUnique({
-    //   where:{
-    //     product_id: createOrderDto.productId
-    //   }
-    // })
+    const productExists = await this.prismaService.product.findUnique({
+      where:{
+        product_id: createOrderDto.productId
+      }
+    })
 
-    // if(!productExists){
-    //   throw new NotFoundException("Product Doesn't Exist")
-    // }
+    if(!productExists){
+      throw new NotFoundException("Product Doesn't Exist")
+    }
 
     const order = await this.prismaService.order.create({
       data: {
