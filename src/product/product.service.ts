@@ -1,26 +1,56 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 
 @Injectable()
 export class ProductService {
-  create(createProductDto: CreateProductDto) {
-    return 'This action adds a new product';
+  constructor(private prisma: PrismaService) {}
+
+  async create(dto: CreateProductDto, files: Express.Multer.File[]) {
+    const imagePaths = files.map((file) => file.filename);
+    return this.prisma.product.create({
+      data: {seller_id:dto.seller_id,
+              title:dto.title,description:dto.description,price:dto.price,
+              category:dto.category,type:dto.type,
+              totalCount:parseInt(dto.totalCount+""),soldCount:parseInt(dto.soldCount+""),
+        images: imagePaths,
+      },
+    });
   }
 
-  findAll() {
-    return `This action returns all product`;
+  async findAll(seller_id:string) {
+    return this.prisma.product.findMany({
+      where: { seller_id },//get their own products
+      include: {
+        seller: true,
+      },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  async findOne(product_id: string) {
+    return this.prisma.product.findUnique({
+      where: { product_id },
+      include: {
+        seller: true,
+        order: true,
+      },
+    });
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  async update(product_id: string, dto: UpdateProductDto) {
+    return this.prisma.product.update({
+      where: { product_id },
+      data: {seller_id:dto.seller_id,
+              title:dto.title,description:dto.description,price:dto.price,
+              category:dto.category,type:dto.type,
+              totalCount:parseInt(dto.totalCount+""),soldCount:parseInt(dto.soldCount+"")},
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+  async delete(product_id: string) {
+    return this.prisma.product.delete({
+      where: { product_id },
+    });
   }
 }

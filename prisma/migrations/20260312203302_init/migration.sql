@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Product" ALTER COLUMN "totalCount" SET DATA TYPE TEXT,
+ALTER COLUMN "soldCount" SET DATA TYPE TEXT;
